@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Image, Dimensions, TextInput, TouchableOpacity, Animated } from 'react-native';
-import axios from 'axios';
-import config from '../../config';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, TextInput, Dimensions } from 'react-native';
+import { ItemsAPI } from '../../services/ItemsAPI';
 import styles from './ItemsList.styles';
 import ItemDetailModal from '../../Modals/ItemDetails/ItemDetailsModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const numColumns = 3;
 const CARD_MARGIN = 6;
@@ -26,26 +24,30 @@ export default function ItemsList() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`${config.apiUrl}/api/items`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setItems(response.data);
+        const itemsData = await ItemsAPI.getItems();
+        // Convertir les objets Realm en objets JavaScript simples
+        const itemsArray = itemsData.map(item => ({
+          _id: item._id,
+          name: item.name,
+          effect: item.effect,
+          sprite_default: item.sprite_default
+        }));
+        setItems(itemsArray);
         setLoading(false);
       } catch (error) {
-        setError('Failed to load items');
+        console.error('Realm Error:', error);
+        setError('Failed to load items data');
         setLoading(false);
       }
     };
-  
+
     fetchItems();
   }, []);
 
-  useEffect(() => {
+  const handleSearch = (text) => {
+    setSearch(text);
     setPage(1); // Reset pagination on search change
-  }, [search]);
+  };
 
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(search.trim().toLowerCase())
@@ -104,7 +106,7 @@ export default function ItemsList() {
         style={styles.searchBar}
         placeholder="Search items..."
         value={search}
-        onChangeText={setSearch}
+        onChangeText={handleSearch}
         autoCapitalize="none"
         autoCorrect={false}
         clearButtonMode="while-editing"
@@ -154,4 +156,4 @@ export default function ItemsList() {
       <ItemDetailModal visible={modalVisible} item={selectedItem} onClose={() => setModalVisible(false)} />
     </View>
   );
-} 
+}

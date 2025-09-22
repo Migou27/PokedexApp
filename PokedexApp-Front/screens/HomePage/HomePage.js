@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, TextInput } from 'react-native';
 import { Image as RNImage } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import axios from 'axios';
 import styles from './HomePage.styles';
-import config from '../../config';
 import paths from '../../assets/importImages';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PokemonAPI } from '../../services/PokemonAPI';
+import PokemonCard from '../../components/PokemonCard';
 
 const typeColors = {
   normal: '#A8A878',
@@ -54,23 +53,27 @@ export default function HomeScreen({ navigation }) {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [search, setSearch] = useState(''); // <-- Add search state
+  const [search, setSearch] = useState('');
   const flatListRef = useRef(null);
   const PAGE_SIZE = 10;
+  const MAX_POKEMON_COUNT = 1025; // Limite maximale de Pokémon
 
   useEffect(() => {
     const fetchPokemons = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`${config.apiUrl}/api/Pokemons`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setPokemons(response.data);
+        const pokemonData = await PokemonAPI.getPokemons();
+        // Limiter à 1025 Pokémon maximum
+        const limitedPokemonData = pokemonData.slice(0, MAX_POKEMON_COUNT);
+        const pokemonArray = limitedPokemonData.map(pokemon => ({
+          _id: pokemon._id,
+          name: pokemon.name,
+          types: pokemon.types,
+          sprite_front_default: pokemon.sprite_front_default
+        }));
+        setPokemons(pokemonArray);
         setLoading(false);
       } catch (error) {
-        console.error('API Error:', error);
+        console.error('Realm Error:', error);
         setError('Failed to load Pokémon data');
         setLoading(false);
       }
@@ -144,7 +147,7 @@ export default function HomeScreen({ navigation }) {
     <View style={{ flex: 1 }}>
       <TextInput
         style={styles.searchBar}
-        placeholder="Search pokémons..."
+        placeholder="Search pokemons..."
         value={search}
         onChangeText={text => {
           setSearch(text);
@@ -159,47 +162,12 @@ export default function HomeScreen({ navigation }) {
         data={displayedPokemons}
         keyExtractor={item => item.name}
         contentContainerStyle={styles.container}
-        renderItem={({ item }) => {
-          const cardColors = getCardColors(item.types);
-          return (
-            <TouchableOpacity
-              onPress={() => handlePokemonPress(item)}
-              activeOpacity={0.7}
-              style={{ borderRadius: 12, marginBottom: 12, overflow: 'hidden' }}
-            >
-              <LinearGradient
-                colors={cardColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.card}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <View style={styles.typesContainer}>
-                      {item.types && item.types.map((type, index) => (
-                        <View key={index} style={{ marginRight: 4 }}>
-                          <RNImage
-                            source={getTypeIcon(type)}
-                            style={{ width: 75, height: 16 }}
-                            resizeMode="contain"
-                          />
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                  {item.sprite_front_default && (
-                    <Image
-                      source={{ uri: item.sprite_front_default }}
-                      style={{ width: 56, height: 56, marginLeft: 8 }}
-                      resizeMode="contain"
-                    />
-                  )}
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ item }) => (
+          <PokemonCard
+            pokemon={item}
+            onPress={handlePokemonPress}
+          />
+        )}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}

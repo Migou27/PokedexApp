@@ -17,7 +17,8 @@ const typeIcons = {
   dark: require('./types/dark_type.png'),
   steel: require('./types/steel_type.png'),
   fairy: require('./types/fairy_type.png'),
-  shadow: require('./types/shadow_type.png')
+  shadow: require('./types/shadow_type.png'),
+  stellar: require('./types/stellar_type.png'),
 };
 
 const classIcons = {

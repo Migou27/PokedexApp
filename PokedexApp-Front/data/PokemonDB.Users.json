@@ -1,0 +1,27 @@
+[{
+  "_id": {
+    "$oid": "68654be2a5e98238118f6b12"
+  },
+  "pseudo": "Migou",
+  "password": "$2b$10$gNRcYQR8tfGnm3KBo7uJ0uOzKSIU7HxRfquMqH2LE3yk4mCJIx4Dm",
+  "role": "admin",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68663aa0aa3f3648b1ce90c9"
+  },
+  "pseudo": "Hans",
+  "password": "$2b$10$NDtzQkGwdFdHqgfxPe.yQ.0El2Y6iBSZbopWI5zKgb2TKYIdG0zZW",
+  "role": "user",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68665ccaaa3f3648b1ce90f3"
+  },
+  "pseudo": "Test",
+  "password": "$2b$10$HzER.VFD9lia4B4hXGafEuVLCCA/sbE95A8GdcF7Nd.dYh8Zr6SB6",
+  "role": "user",
+  "__v": 0
+}]

@@ -12,8 +12,7 @@ import {
 import styles from './MoveDetailsModal.styles';
 import paths from '../../assets/importImages';
 import { Image as RNImage } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from '../../config';
+import { PokemonAPI } from '../../services/PokemonAPI';
 
 const getTypeIcon = (type) => {
   return paths.typeIcons[type?.toLowerCase()] || null;
@@ -32,16 +31,12 @@ const MoveDetailModal = ({ isVisible, onClose, move }) => {
       if (isVisible && move?.name) {
         setLoading(true);
         try {
-          const token = await AsyncStorage.getItem('token');
-          const res = await fetch(`${config.apiUrl}/api/pokemon/move/${move.name}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await res.json();
-          setPokemonList(data);
+          // Utiliser le service AsyncStorage au lieu de l'API
+          const pokemons = await PokemonAPI.getPokemonByMove(move.name);
+          setPokemonList(pokemons);
           setLoading(false);
         } catch (e) {
+          console.error('Erreur lors du chargement des Pokémon:', e);
           setPokemonList([]);
           setLoading(false);
         }

@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, ScrollView, TextInput } from 'react-native'
-import axios from 'axios';
-import config from '../../config';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { MovesAPI } from '../../services/MovesAPI';
 import styles from './MovesList.styles';
 import TypeFilterModal from '../../Modals/TypeFilterModal/TypeFilterModal';
 import MoveDetailsModal from '../../Modals/MoveDetails/MoveDetailsModal';
 import paths from '../../assets/importImages';
 import { Image as RNImage } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import MoveCard from '../../components/MoveCard';
 
 const MOVE_TYPES = [
   'normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying',
@@ -92,21 +91,28 @@ export default function MovesList() {
   useEffect(() => {
     const fetchMoves = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`${config.apiUrl}/api/moves`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const sortedMoves = response.data.sort((a, b) => a.name.localeCompare(b.name));
-        setMoves(sortedMoves);
+        const movesData = await MovesAPI.getMoves();
+        // Convertir les objets Realm en objets JavaScript simples
+        const movesArray = movesData.map(move => ({
+          _id: move._id,
+          name: move.name,
+          accuracy: move.accuracy,
+          pp: move.pp,
+          power: move.power,
+          priority: move.priority,
+          type: move.type,
+          damage_class: move.damage_class,
+          short_effect: move.short_effect
+        }));
+        setMoves(movesArray);
         setLoading(false);
       } catch (error) {
-        setError('Failed to load moves');
+        console.error('Realm Error:', error);
+        setError('Failed to load moves data');
         setLoading(false);
       }
     };
-  
+
     fetchMoves();
   }, []);
 
@@ -189,6 +195,13 @@ export default function MovesList() {
     );
   }
 
+  const renderMove = ({ item }) => (
+    <MoveCard
+      move={item}
+      onPress={openMoveModal}
+    />
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <TextInput
@@ -233,36 +246,9 @@ export default function MovesList() {
       <FlatList
         ref={flatListRef}
         data={paginatedMoves}
-        keyExtractor={item => item.name}
-        contentContainerStyle={styles.container}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => openMoveModal(item)} activeOpacity={0.8}>
-            <View key={item.id} style={styles.moveCard}>
-        <View style={styles.moveTypeBadge}>
-          <RNImage
-            source={getTypeIcon(item.type)}
-            style={{ width: 75, height: 32 }}
-            resizeMode="contain"
-          />
-        </View>
-        <RNImage
-          source={getClassIcon(item.damage_class)}
-          style={{ width: 35, height: 28 }}
-          resizeMode="contain"
-        />
-        <View style={styles.moveInfo}>
-          <Text style={styles.moveName}>{item.name}</Text>
-          <View style={styles.moveStatsRow}>
-            <Text style={styles.moveStat}>Power: {item.power ?? '-'}</Text>
-            <Text style={styles.moveStat}>
-              Acc: {item.accuracy != null ? `${item.accuracy}%` : '-'}
-            </Text>
-            <Text style={styles.moveStat}>PP: {item.pp ?? '-'}</Text>
-          </View>
-        </View>
-      </View>
-          </TouchableOpacity>
-        )}
+        keyExtractor={(item) => item._id.toString()}
+        contentContainerStyle={styles.movesList}
+        renderItem={renderMove}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}

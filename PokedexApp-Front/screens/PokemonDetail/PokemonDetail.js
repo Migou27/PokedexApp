@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import axios from 'axios';
-import config from '../../config';
-import styles from './PokemonDetail.styles'
+import { View, Text, ScrollView, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import { PokemonAPI } from '../../services/PokemonAPI';
+import { MovesAPI } from '../../services/MovesAPI';
+import styles from './PokemonDetail.styles';
 import StatCalculator from '../../components/StatCalculator';
 import { Image as RNImage } from 'react-native';
 import paths from '../../assets/importImages';
 import MovesDisplayer from '../../components/MovesDisplayer/MovesDisplayer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getTypeIcon = (type) => {
   return paths.typeIcons[type?.toLowerCase()] || null;
@@ -35,55 +27,80 @@ export default function PokemonDetailScreen({ route, navigation }) {
   const [movesCollapsed, setMovesCollapsed] = useState(true);
   const [activeTab, setActiveTab] = useState('base');
 
-  
-
   useEffect(() => {
-    const fetchPokemonData = async () => {
+    const fetchPokemon = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        const pokemonResponse = await axios.get(`${config.apiUrl}/api/pokemons/${pokemonName}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setPokemon(pokemonResponse.data);
-  
-        const formsResponse = await axios.get(`${config.apiUrl}/api/pokemons/${pokemonName}/forms`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setForms(formsResponse.data || []);
-  
+        const pokemonData = await PokemonAPI.getPokemonByName(pokemonName);
+        if (pokemonData) {
+          // Convertir l'objet Realm en objet JavaScript simple
+          const pokemonObj = {
+            _id: pokemonData._id,
+            name: pokemonData.name,
+            height: pokemonData.height,
+            weight: pokemonData.weight,
+            base_experience: pokemonData.base_experience,
+            types: pokemonData.types,
+            abilities: pokemonData.abilities,
+            stats: pokemonData.stats,
+            sprite_front_default: pokemonData.sprite_front_default,
+            sprite_front_shiny: pokemonData.sprite_front_shiny
+          };
+          setPokemon(pokemonObj);
+        } else {
+          setError('Pokemon not found');
+        }
         setLoading(false);
       } catch (error) {
-        console.error('API Error:', error);
-        setError('Failed to load Pokémon details');
+        console.error('Realm Error:', error);
+        setError('Failed to load Pokemon data');
         setLoading(false);
       }
     };
-  
-    fetchPokemonData();
+
+    fetchPokemon();
   }, [pokemonName]);
 
+  // Ajout de l'useEffect pour récupérer les formes
   useEffect(() => {
-    const fetchMoves = async () => {
-      setMovesLoading(true);
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const movesResponse = await axios.get(`${config.apiUrl}/api/moves/pokemon/${pokemonName}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setMoves(movesResponse.data || []);
-      } catch (error) {
-        setMoves([]);
+    const fetchForms = async () => {
+      if (pokemon && pokemon.name) {
+        try {
+
+          let basePokemonName = pokemon.name;
+          if (pokemon.name.includes('-mega-') || pokemon.name.includes('-gmax') || pokemon.name.includes('-gigantamax')) {
+            // Extraire le nom de base (ex: "charizard" depuis "charizard-mega-x")
+            basePokemonName = pokemon.name.split('-')[0];
+          }
+
+          const formsData = await PokemonAPI.getPokemonForms(basePokemonName);
+
+          const formsArray = formsData.map(form => ({
+            _id: form._id,
+            name: form.name,
+            sprite_front_default: form.sprite_front_default,
+            types: form.types
+          }));
+
+          const baseFormExists = formsArray.some(form => form.name === basePokemonName);
+          if (!baseFormExists) {
+            formsArray.unshift({
+              _id: 'base',
+              name: basePokemonName,
+              sprite_front_default: pokemon.sprite_front_default, // Utiliser le sprite du Pokémon actuel
+              types: pokemon.types
+            });
+          }
+
+          setForms(formsArray);
+        } catch (error) {
+          setForms([]);
+        }
       }
-      setMovesLoading(false);
     };
-    fetchMoves();
-  }, [pokemonName]);
+
+    fetchForms();
+  }, [pokemon]);
+
 
   if (loading) {
     return (
@@ -298,27 +315,33 @@ export default function PokemonDetailScreen({ route, navigation }) {
       </View>
 
       {/* Forms */}
-      {forms && forms.length > 0 && forms.some(form => form.name !== pokemon.name) && (
+      {forms && forms.length > 1 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Forms</Text>
           <View style={styles.formsContainer}>
             {forms
-              .filter(form => form.name !== pokemon.name)
-              .map((form, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.formCard}
-                  onPress={() => handleFormPress(form.name)}
-                  activeOpacity={0.7}
-                >
-                  <Image
-                    source={{ uri: form.sprite_front_default }}
-                    style={styles.formSprite}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.formName}>{formatName(form.name)}</Text>
-                </TouchableOpacity>
-              ))}
+              .filter(form => {
+                return form.name !== pokemon.name;
+              })
+              .map((form, index) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.formCard}
+                    onPress={() => handleFormPress(form.name)}
+                    activeOpacity={0.7}
+                  >
+                    <Image
+                      source={{ uri: form.sprite_front_default }}
+                      style={styles.formSprite}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.formName}>
+                      {formatName(form.name)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         </View>
       )}

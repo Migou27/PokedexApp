@@ -236,6 +236,14 @@ tabContent: {
   minHeight: 100,
   margin: 20
 },
+
+debugText: {
+  fontSize: 12,
+  color: '#666',
+  fontStyle: 'italic',
+  marginBottom: 10,
+},
+
 });
 
 

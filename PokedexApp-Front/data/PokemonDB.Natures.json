@@ -1,0 +1,375 @@
+[{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7201"
+  },
+  "name": "Hardy",
+  "plus": null,
+  "minus": null,
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7202"
+  },
+  "name": "Lonely",
+  "plus": "Atk",
+  "minus": "Def",
+  "modifiers": {
+    "Atk": 1.1,
+    "Def": 0.9,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7203"
+  },
+  "name": "Brave",
+  "plus": "Atk",
+  "minus": "Spd",
+  "modifiers": {
+    "Atk": 1.1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 0.9
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7204"
+  },
+  "name": "Adamant",
+  "plus": "Atk",
+  "minus": "Spa",
+  "modifiers": {
+    "Atk": 1.1,
+    "Def": 1,
+    "Spa": 0.9,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7205"
+  },
+  "name": "Naughty",
+  "plus": "Atk",
+  "minus": "SpDef",
+  "modifiers": {
+    "Atk": 1.1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 0.9,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7206"
+  },
+  "name": "Bold",
+  "plus": "Def",
+  "minus": "Atk",
+  "modifiers": {
+    "Atk": 0.9,
+    "Def": 1.1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7207"
+  },
+  "name": "Docile",
+  "plus": null,
+  "minus": null,
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7208"
+  },
+  "name": "Relaxed",
+  "plus": "Def",
+  "minus": "Spd",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1.1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 0.9
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7209"
+  },
+  "name": "Impish",
+  "plus": "Def",
+  "minus": "Spa",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1.1,
+    "Spa": 0.9,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720a"
+  },
+  "name": "Lax",
+  "plus": "Def",
+  "minus": "SpDef",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1.1,
+    "Spa": 1,
+    "SpDef": 0.9,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720b"
+  },
+  "name": "Timid",
+  "plus": "Spd",
+  "minus": "Atk",
+  "modifiers": {
+    "Atk": 0.9,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1.1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720c"
+  },
+  "name": "Hasty",
+  "plus": "Spd",
+  "minus": "Def",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 0.9,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1.1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720d"
+  },
+  "name": "Serious",
+  "plus": null,
+  "minus": null,
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720e"
+  },
+  "name": "Jolly",
+  "plus": "Spd",
+  "minus": "Spa",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 0.9,
+    "SpDef": 1,
+    "Spd": 1.1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c720f"
+  },
+  "name": "Naive",
+  "plus": "Spd",
+  "minus": "SpDef",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 0.9,
+    "Spd": 1.1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7210"
+  },
+  "name": "Modest",
+  "plus": "Spa",
+  "minus": "Atk",
+  "modifiers": {
+    "Atk": 0.9,
+    "Def": 1,
+    "Spa": 1.1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7211"
+  },
+  "name": "Mild",
+  "plus": "Spa",
+  "minus": "Def",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 0.9,
+    "Spa": 1.1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7212"
+  },
+  "name": "Quiet",
+  "plus": "Spa",
+  "minus": "Spd",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1.1,
+    "SpDef": 1,
+    "Spd": 0.9
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7213"
+  },
+  "name": "Bashful",
+  "plus": null,
+  "minus": null,
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7214"
+  },
+  "name": "Rash",
+  "plus": "Spa",
+  "minus": "SpDef",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1.1,
+    "SpDef": 0.9,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7215"
+  },
+  "name": "Calm",
+  "plus": "SpDef",
+  "minus": "Atk",
+  "modifiers": {
+    "Atk": 0.9,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1.1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7216"
+  },
+  "name": "Gentle",
+  "plus": "SpDef",
+  "minus": "Def",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 0.9,
+    "Spa": 1,
+    "SpDef": 1.1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7217"
+  },
+  "name": "Sassy",
+  "plus": "SpDef",
+  "minus": "Spd",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1.1,
+    "Spd": 0.9
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7218"
+  },
+  "name": "Careful",
+  "plus": "SpDef",
+  "minus": "Spa",
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 0.9,
+    "SpDef": 1.1,
+    "Spd": 1
+  }
+},
+{
+  "_id": {
+    "$oid": "6860e76d7a8d3186923c7219"
+  },
+  "name": "Quirky",
+  "plus": null,
+  "minus": null,
+  "modifiers": {
+    "Atk": 1,
+    "Def": 1,
+    "Spa": 1,
+    "SpDef": 1,
+    "Spd": 1
+  }
+}]

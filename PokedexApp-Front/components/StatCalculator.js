@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ActivityIndicator, Modal, TouchableOpacity, FlatList } from 'react-native';
-import axios from 'axios';
-import config from '../config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NaturesAPI } from '../services/NaturesAPI';
 
 function calculateStat(Base, IV, EV, Lvl, Nat) {
   const evPart = Math.ceil(EV / 4);
@@ -19,8 +17,8 @@ function calculateHP(Base, IV, EV, Lvl) {
   return value + Lvl + 10;
 }
 
-export default function StatCalculator({ baseStats, pokemonName }) {
-  const [Lvl, setLvl] = useState(100);
+export default function StatCalculator({ baseStats, pokemonName, level, onLevelChange }) {
+  const [Lvl, setLvl] = useState(level || 100);
   const [IVs, setIVs] = useState({ Hp: 31, Atk: 31, Def: 31, Spa: 31, SpDef: 31, Spd: 31 });
   const [EVs, setEVs] = useState({ Hp: 0, Atk: 0, Def: 0, Spa: 0, SpDef: 0, Spd: 0 });
   const [IVInputs, setIVInputs] = useState({ ...IVs });
@@ -93,6 +91,13 @@ export default function StatCalculator({ baseStats, pokemonName }) {
   useEffect(() => { setIVInputs({ ...IVs }); }, [IVs]);
   useEffect(() => { setEVInputs({ ...EVs }); }, [EVs]);
 
+  // Synchroniser le niveau externe avec l'état interne
+  useEffect(() => {
+    if (level !== undefined && level !== Lvl) {
+      setLvl(level);
+    }
+  }, [level]);
+
   const getStatBarWidth = (statValue) => {
     const maxStat = 550;
     const minStat = 1;
@@ -107,13 +112,21 @@ export default function StatCalculator({ baseStats, pokemonName }) {
   useEffect(() => {
     const fetchNatures = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`${config.apiUrl}/api/natures`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setNatures(response.data);
+        const naturesData = await NaturesAPI.getNatures();
+        // Convertir les objets Realm en objets JavaScript simples
+        const naturesArray = naturesData.map(nature => ({
+          name: nature.name,
+          plus: nature.plus,
+          minus: nature.minus,
+          modifiers: {
+            Atk: nature.modifiers.Atk,
+            Def: nature.modifiers.Def,
+            Spa: nature.modifiers.Spa,
+            SpDef: nature.modifiers.SpDef,
+            Spd: nature.modifiers.Spd
+          }
+        }));
+        setNatures(naturesArray);
         setLoading(false);
       } catch (error) {
         console.error('Erreur lors du chargement des natures:', error);
@@ -139,6 +152,25 @@ export default function StatCalculator({ baseStats, pokemonName }) {
 
   const totalEV = Object.values(EVs).reduce((a, b) => a + b, 0);
   const overLimit = totalEV > 508;
+
+  if (loading) {
+    return (
+      <View style={{ padding: 15, backgroundColor: '#f8f9fa', margin: 10, borderRadius: 8, alignItems: 'center' }}>
+        <ActivityIndicator size="small" color="#888" />
+        <Text style={{ marginTop: 8, fontSize: 12 }}>Loading natures...</Text>
+      </View>
+    );
+  }
+
+  const handleLevelChange = (newLevel) => {
+    const validLevel = Math.min(100, Math.max(1, newLevel));
+    setLvl(validLevel);
+    
+    // Notifier le composant parent du changement de niveau
+    if (onLevelChange) {
+      onLevelChange(validLevel);
+    }
+  };
 
   return (
     <View style={{ padding: 15, backgroundColor: '#f8f9fa', margin: 10, borderRadius: 8 }}>
@@ -182,7 +214,7 @@ export default function StatCalculator({ baseStats, pokemonName }) {
             }}
             keyboardType="numeric"
             value={String(Lvl)}
-            onChangeText={(v) => setLvl(Math.min(100, Math.max(1, parseInt(v) || 1)))}
+            onChangeText={(v) => handleLevelChange(parseInt(v) || 1)}
           />
         </View>
       </View>
